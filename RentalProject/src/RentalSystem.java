@@ -41,9 +41,16 @@ public class RentalSystem {
         return true;
     }
 
-    public void addCustomer(Customer customer) {
+    // I am preventing duplicate customer IDs before adding a customer.
+    public boolean addCustomer(Customer customer) {
+        if (findCustomerById(customer.getCustomerId()) != null) {
+            System.out.println("A customer with this ID already exists.");
+            return false;
+        }
+
         customers.add(customer);
         saveCustomer(customer);
+        return true;
     }
 
     public void rentVehicle(Vehicle vehicle, Customer customer, LocalDate date, double amount) {
