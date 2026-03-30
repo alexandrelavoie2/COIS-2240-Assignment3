@@ -1,9 +1,12 @@
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.time.LocalDate;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Modifier;
 
 import org.junit.jupiter.api.Test;
 
@@ -48,5 +51,14 @@ public class VehicleRentalTest {
         assertEquals(Vehicle.VehicleStatus.Available, vCar.getStatus());
 
         assertFalse(rsRentalSystem.returnVehicle(vCar, cCustomer, LocalDate.now(), 0.0));
+    }
+
+    @Test
+    public void testSingletonRentalSystem() throws Exception {
+        Constructor<RentalSystem> cRentalSystemConstructor = RentalSystem.class.getDeclaredConstructor();
+        int iModifiers = cRentalSystemConstructor.getModifiers();
+
+        assertEquals(Modifier.PRIVATE, iModifiers);
+        assertNotNull(RentalSystem.getInstance());
     }
 }
