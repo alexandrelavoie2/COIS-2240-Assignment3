@@ -21,6 +21,8 @@ public class RentalSystemGUI extends Application {
     private final TextField tfCarMake = new TextField();
     private final TextField tfCarModel = new TextField();
     private final TextField tfCarYear = new TextField();
+    private final TextField tfCustomerId = new TextField();
+    private final TextField tfCustomerName = new TextField();
     private final TextField tfMinibusPlate = new TextField();
     private final TextField tfMinibusMake = new TextField();
     private final TextField tfMinibusModel = new TextField();
@@ -95,11 +97,24 @@ public class RentalSystemGUI extends Application {
         Label lblTitle = new Label("Add Customer");
         lblTitle.setStyle("-fx-font-size: 24px; -fx-font-weight: bold;");
 
+        Label lblCustomerId = new Label("Enter customer ID");
+        tfCustomerId.setPromptText("e.g. 1");
+        Label lblCustomerName = new Label("Enter customer name");
+        tfCustomerName.setPromptText("e.g. George");
+
+        Button btnAddCustomer = createMenuButton("Add Customer");
         Button btnBack = createMenuButton("0: Back");
         btnBack.setOnAction(event -> showMainMenu());
 
         configureMenuBox(vbAddCustomerMenu);
-        vbAddCustomerMenu.getChildren().addAll(lblTitle, btnBack);
+        vbAddCustomerMenu.getChildren().addAll(
+                lblTitle,
+                lblCustomerId,
+                tfCustomerId,
+                lblCustomerName,
+                tfCustomerName,
+                btnAddCustomer,
+                btnBack);
     }
 
     private void buildAddCarMenu() {
