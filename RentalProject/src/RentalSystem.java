@@ -1,9 +1,15 @@
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.List;
 import java.time.LocalDate;
 import java.util.ArrayList;
 
 public class RentalSystem {
     private static RentalSystem instance;
+    private static final String sVehiclesFile = "vehicles.txt";
+    private static final String sCustomersFile = "customers.txt";
+    private static final String sRentalRecordsFile = "rental_records.txt";
 
     private List<Vehicle> vehicles = new ArrayList<>();
     private List<Customer> customers = new ArrayList<>();
@@ -21,16 +27,21 @@ public class RentalSystem {
 
     public void addVehicle(Vehicle vehicle) {
         vehicles.add(vehicle);
+        saveVehicle(vehicle);
     }
 
     public void addCustomer(Customer customer) {
         customers.add(customer);
+        saveCustomer(customer);
     }
 
     public void rentVehicle(Vehicle vehicle, Customer customer, LocalDate date, double amount) {
         if (vehicle.getStatus() == Vehicle.VehicleStatus.Available) {
             vehicle.setStatus(Vehicle.VehicleStatus.Rented);
-            rentalHistory.addRecord(new RentalRecord(vehicle, customer, date, amount, "RENT"));
+            RentalRecord record = new RentalRecord(vehicle, customer, date, amount, "RENT");
+            rentalHistory.addRecord(record);
+            saveRecord(record);
+            overwriteVehiclesFile();
             System.out.println("Vehicle rented to " + customer.getCustomerName());
         }
         else {
@@ -41,13 +52,84 @@ public class RentalSystem {
     public void returnVehicle(Vehicle vehicle, Customer customer, LocalDate date, double extraFees) {
         if (vehicle.getStatus() == Vehicle.VehicleStatus.Rented) {
             vehicle.setStatus(Vehicle.VehicleStatus.Available);
-            rentalHistory.addRecord(new RentalRecord(vehicle, customer, date, extraFees, "RETURN"));
+            RentalRecord record = new RentalRecord(vehicle, customer, date, extraFees, "RETURN");
+            rentalHistory.addRecord(record);
+            saveRecord(record);
+            overwriteVehiclesFile();
             System.out.println("Vehicle returned by " + customer.getCustomerName());
         }
         else {
             System.out.println("Vehicle is not rented.");
         }
     }    
+
+    // I am appending each new vehicle to vehicles.txt when it is added.
+    public void saveVehicle(Vehicle vehicle) {
+        appendLine(sVehiclesFile, formatVehicle(vehicle));
+    }
+
+    // I am appending each new customer to customers.txt when it is added.
+    public void saveCustomer(Customer customer) {
+        String customerLine = customer.getCustomerId() + "|" + customer.getCustomerName();
+        appendLine(sCustomersFile, customerLine);
+    }
+
+    // I am appending each rent or return event to rental_records.txt after it is created.
+    public void saveRecord(RentalRecord record) {
+        String recordLine = record.getRecordType() + "|" +
+                record.getVehicle().getLicensePlate() + "|" +
+                record.getCustomer().getCustomerId() + "|" +
+                record.getCustomer().getCustomerName() + "|" +
+                record.getRecordDate() + "|" +
+                record.getTotalAmount();
+        appendLine(sRentalRecordsFile, recordLine);
+    }
+
+    private void overwriteVehiclesFile() {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(sVehiclesFile, false))) {
+            for (Vehicle vehicle : vehicles) {
+                writer.write(formatVehicle(vehicle));
+                writer.newLine();
+            }
+        } catch (IOException e) {
+            System.out.println("I could not update " + sVehiclesFile + ".");
+        }
+    }
+
+    private void appendLine(String fileName, String line) {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(fileName, true))) {
+            writer.write(line);
+            writer.newLine();
+        } catch (IOException e) {
+            System.out.println("I could not save data to " + fileName + ".");
+        }
+    }
+
+    private String formatVehicle(Vehicle vehicle) {
+        if (vehicle instanceof Car) {
+            Car car = (Car) vehicle;
+            return "Car|" + vehicle.getLicensePlate() + "|" + vehicle.getMake() + "|" +
+                    vehicle.getModel() + "|" + vehicle.getYear() + "|" + vehicle.getStatus() + "|" +
+                    car.getNumSeats();
+        }
+
+        if (vehicle instanceof Minibus) {
+            Minibus minibus = (Minibus) vehicle;
+            return "Minibus|" + vehicle.getLicensePlate() + "|" + vehicle.getMake() + "|" +
+                    vehicle.getModel() + "|" + vehicle.getYear() + "|" + vehicle.getStatus() + "|" +
+                    minibus.isAccessible();
+        }
+
+        if (vehicle instanceof PickupTruck) {
+            PickupTruck pickupTruck = (PickupTruck) vehicle;
+            return "PickupTruck|" + vehicle.getLicensePlate() + "|" + vehicle.getMake() + "|" +
+                    vehicle.getModel() + "|" + vehicle.getYear() + "|" + vehicle.getStatus() + "|" +
+                    pickupTruck.getCargoSize() + "|" + pickupTruck.hasTrailer();
+        }
+
+        return "Vehicle|" + vehicle.getLicensePlate() + "|" + vehicle.getMake() + "|" +
+                vehicle.getModel() + "|" + vehicle.getYear() + "|" + vehicle.getStatus();
+    }
 
     public void displayVehicles(Vehicle.VehicleStatus status) {
         // Display appropriate title based on status
