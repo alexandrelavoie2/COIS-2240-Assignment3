@@ -13,6 +13,7 @@ public class RentalSystemGUI extends Application {
     private Scene scene;
     private final VBox vbMainMenu = new VBox(14);
     private final VBox vbAddVehicleMenu = new VBox(14);
+    private final VBox vbAddCustomerMenu = new VBox(14);
     private final VBox vbAddCarMenu = new VBox(14);
     private final VBox vbAddMinibusMenu = new VBox(14);
     private final VBox vbAddPickupTruckMenu = new VBox(14);
@@ -47,6 +48,7 @@ public class RentalSystemGUI extends Application {
         Button btnExit = createMenuButton("0: Exit");
 
         btnAddVehicle.setOnAction(event -> showAddVehicleMenu());
+        btnAddCustomer.setOnAction(event -> showAddCustomerMenu());
         btnExit.setOnAction(event -> stage.close());
 
         configureMenuBox(vbMainMenu);
@@ -60,6 +62,7 @@ public class RentalSystemGUI extends Application {
                 btnExit);
 
         buildAddVehicleMenu();
+        buildAddCustomerMenu();
         buildAddCarMenu();
         buildAddMinibusMenu();
         buildAddPickupTruckMenu();
@@ -86,6 +89,17 @@ public class RentalSystemGUI extends Application {
 
         configureMenuBox(vbAddVehicleMenu);
         vbAddVehicleMenu.getChildren().addAll(lblTitle, btnCar, btnMinibus, btnPickupTruck, btnBack);
+    }
+
+    private void buildAddCustomerMenu() {
+        Label lblTitle = new Label("Add Customer");
+        lblTitle.setStyle("-fx-font-size: 24px; -fx-font-weight: bold;");
+
+        Button btnBack = createMenuButton("0: Back");
+        btnBack.setOnAction(event -> showMainMenu());
+
+        configureMenuBox(vbAddCustomerMenu);
+        vbAddCustomerMenu.getChildren().addAll(lblTitle, btnBack);
     }
 
     private void buildAddCarMenu() {
@@ -211,6 +225,10 @@ public class RentalSystemGUI extends Application {
 
     private void showAddVehicleMenu() {
         scene.setRoot(vbAddVehicleMenu);
+    }
+
+    private void showAddCustomerMenu() {
+        scene.setRoot(vbAddCustomerMenu);
     }
 
     private void showAddCarMenu() {
