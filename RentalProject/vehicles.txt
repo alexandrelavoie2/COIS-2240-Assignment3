@@ -1,3 +1,4 @@
 Car|AAA111|Toyota|Corolla|2019|Rented|4
 Minibus|BBB222|Honda|Corolla|2019|Rented|true
 PickupTruck|CCC333|Ford|Focus|2024|Rented|4.0|true
+PickupTruck|CCC111|Toyota|Corolla|2019|Available|4.0|true

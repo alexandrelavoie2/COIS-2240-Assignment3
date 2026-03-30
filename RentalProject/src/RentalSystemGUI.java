@@ -14,10 +14,23 @@ public class RentalSystemGUI extends Application {
     private final VBox vbMainMenu = new VBox(14);
     private final VBox vbAddVehicleMenu = new VBox(14);
     private final VBox vbAddCarMenu = new VBox(14);
+    private final VBox vbAddMinibusMenu = new VBox(14);
+    private final VBox vbAddPickupTruckMenu = new VBox(14);
     private final TextField tfCarPlate = new TextField();
     private final TextField tfCarMake = new TextField();
     private final TextField tfCarModel = new TextField();
     private final TextField tfCarYear = new TextField();
+    private final TextField tfMinibusPlate = new TextField();
+    private final TextField tfMinibusMake = new TextField();
+    private final TextField tfMinibusModel = new TextField();
+    private final TextField tfMinibusYear = new TextField();
+    private final TextField tfMinibusAccessible = new TextField();
+    private final TextField tfPickupTruckPlate = new TextField();
+    private final TextField tfPickupTruckMake = new TextField();
+    private final TextField tfPickupTruckModel = new TextField();
+    private final TextField tfPickupTruckYear = new TextField();
+    private final TextField tfPickupTruckCargoSize = new TextField();
+    private final TextField tfPickupTruckHasTrailer = new TextField();
 
     public static void main(String[] args) {
         launch(args);
@@ -48,6 +61,8 @@ public class RentalSystemGUI extends Application {
 
         buildAddVehicleMenu();
         buildAddCarMenu();
+        buildAddMinibusMenu();
+        buildAddPickupTruckMenu();
 
         scene = new Scene(vbMainMenu, 700, 650);
         stage.setTitle("Vehicle Rental System GUI");
@@ -65,6 +80,8 @@ public class RentalSystemGUI extends Application {
         Button btnBack = createMenuButton("0: Back");
 
         btnCar.setOnAction(event -> showAddCarMenu());
+        btnMinibus.setOnAction(event -> showAddMinibusMenu());
+        btnPickupTruck.setOnAction(event -> showAddPickupTruckMenu());
         btnBack.setOnAction(event -> showMainMenu());
 
         configureMenuBox(vbAddVehicleMenu);
@@ -104,6 +121,84 @@ public class RentalSystemGUI extends Application {
                 btnBack);
     }
 
+    private void buildAddMinibusMenu() {
+        Label lblTitle = new Label("Add Minibus");
+        lblTitle.setStyle("-fx-font-size: 24px; -fx-font-weight: bold;");
+
+        Label lblPlate = new Label("Enter license plate");
+        tfMinibusPlate.setPromptText("e.g. BBB222");
+        Label lblMake = new Label("Enter make");
+        tfMinibusMake.setPromptText("e.g. Honda");
+        Label lblModel = new Label("Enter model");
+        tfMinibusModel.setPromptText("e.g. Civic");
+        Label lblYear = new Label("Enter year");
+        tfMinibusYear.setPromptText("e.g. 2021");
+        Label lblAccessible = new Label("Is accessible? (true/false)");
+        tfMinibusAccessible.setPromptText("true or false");
+
+        Button btnAddMinibus = createMenuButton("Add Minibus");
+        Button btnBack = createMenuButton("0: Back");
+
+        btnBack.setOnAction(event -> showAddVehicleMenu());
+
+        configureMenuBox(vbAddMinibusMenu);
+        vbAddMinibusMenu.getChildren().addAll(
+                lblTitle,
+                lblPlate,
+                tfMinibusPlate,
+                lblMake,
+                tfMinibusMake,
+                lblModel,
+                tfMinibusModel,
+                lblYear,
+                tfMinibusYear,
+                lblAccessible,
+                tfMinibusAccessible,
+                btnAddMinibus,
+                btnBack);
+    }
+
+    private void buildAddPickupTruckMenu() {
+        Label lblTitle = new Label("Add Pickup Truck");
+        lblTitle.setStyle("-fx-font-size: 24px; -fx-font-weight: bold;");
+
+        Label lblPlate = new Label("Enter license plate");
+        tfPickupTruckPlate.setPromptText("e.g. CCC111");
+        Label lblMake = new Label("Enter make");
+        tfPickupTruckMake.setPromptText("e.g. Toyota");
+        Label lblModel = new Label("Enter model");
+        tfPickupTruckModel.setPromptText("e.g. Corolla");
+        Label lblYear = new Label("Enter year");
+        tfPickupTruckYear.setPromptText("e.g. 2019");
+        Label lblCargoSize = new Label("Enter the cargo size");
+        tfPickupTruckCargoSize.setPromptText("e.g. 4");
+        Label lblHasTrailer = new Label("Has trailer? (true/false)");
+        tfPickupTruckHasTrailer.setPromptText("true or false");
+
+        Button btnAddPickupTruck = createMenuButton("Add Pickup Truck");
+        Button btnBack = createMenuButton("0: Back");
+
+        btnBack.setOnAction(event -> showAddVehicleMenu());
+
+        configureMenuBox(vbAddPickupTruckMenu);
+        vbAddPickupTruckMenu.getChildren().addAll(
+                lblTitle,
+                lblPlate,
+                tfPickupTruckPlate,
+                lblMake,
+                tfPickupTruckMake,
+                lblModel,
+                tfPickupTruckModel,
+                lblYear,
+                tfPickupTruckYear,
+                lblCargoSize,
+                tfPickupTruckCargoSize,
+                lblHasTrailer,
+                tfPickupTruckHasTrailer,
+                btnAddPickupTruck,
+                btnBack);
+    }
+
     private void configureMenuBox(VBox vbMenu) {
         vbMenu.setSpacing(14);
         vbMenu.setPadding(new Insets(24));
@@ -120,6 +215,14 @@ public class RentalSystemGUI extends Application {
 
     private void showAddCarMenu() {
         scene.setRoot(vbAddCarMenu);
+    }
+
+    private void showAddMinibusMenu() {
+        scene.setRoot(vbAddMinibusMenu);
+    }
+
+    private void showAddPickupTruckMenu() {
+        scene.setRoot(vbAddPickupTruckMenu);
     }
 
     private Button createMenuButton(String sText) {
