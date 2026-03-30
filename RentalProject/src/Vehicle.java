@@ -20,7 +20,11 @@ public abstract class Vehicle {
     }
 
     public void setLicensePlate(String plate) {
-        this.licensePlate = plate == null ? null : plate.toUpperCase();
+        if (!isValidPlate(plate)) {
+            throw new IllegalArgumentException("License plate must be three letters followed by three numbers.");
+        }
+
+        this.licensePlate = plate.toUpperCase();
     }
 
     public void setStatus(VehicleStatus status) {
@@ -48,6 +52,15 @@ public abstract class Vehicle {
     	}
 
     	return input.substring(0, 1).toUpperCase() + input.substring(1).toLowerCase();
+    }
+
+    // I am validating the license plate before assigning it to a vehicle.
+    private boolean isValidPlate(String plate) {
+    	if (plate == null || plate.isEmpty()) {
+    		return false;
+    	}
+
+    	return plate.matches("[A-Za-z]{3}[0-9]{3}");
     }
 
 }
