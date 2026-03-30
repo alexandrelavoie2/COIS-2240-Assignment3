@@ -1,5 +1,8 @@
 import java.io.BufferedWriter;
+import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileWriter;
+import java.io.FileReader;
 import java.io.IOException;
 import java.util.List;
 import java.time.LocalDate;
@@ -16,6 +19,7 @@ public class RentalSystem {
     private RentalHistory rentalHistory = new RentalHistory();
 
     private RentalSystem() {
+        loadData();
     }
 
     public static RentalSystem getInstance() {
@@ -85,6 +89,110 @@ public class RentalSystem {
         appendLine(sRentalRecordsFile, recordLine);
     }
 
+    // I am loading the saved vehicles, customers, and rental records when the system starts.
+    private void loadData() {
+        loadVehiclesFromFile();
+        loadCustomersFromFile();
+        loadRecordsFromFile();
+    }
+
+    // I am rebuilding the vehicles list from vehicles.txt.
+    private void loadVehiclesFromFile() {
+        File fVehiclesFile = new File(sVehiclesFile);
+
+        if (!fVehiclesFile.exists()) {
+            return;
+        }
+
+        try (BufferedReader reader = new BufferedReader(new FileReader(fVehiclesFile))) {
+            String sLine;
+
+            while ((sLine = reader.readLine()) != null) {
+                String[] aParts = sLine.split("\\|");
+
+                if (aParts.length < 6) {
+                    continue;
+                }
+
+                Vehicle vehicle = createVehicleFromData(aParts);
+
+                if (vehicle != null) {
+                    vehicles.add(vehicle);
+                }
+            }
+        } catch (IOException e) {
+            System.out.println("I could not load data from " + sVehiclesFile + ".");
+        }
+    }
+
+    // I am rebuilding the customers list from customers.txt.
+    private void loadCustomersFromFile() {
+        File fCustomersFile = new File(sCustomersFile);
+
+        if (!fCustomersFile.exists()) {
+            return;
+        }
+
+        try (BufferedReader reader = new BufferedReader(new FileReader(fCustomersFile))) {
+            String sLine;
+
+            while ((sLine = reader.readLine()) != null) {
+                String[] aParts = sLine.split("\\|");
+
+                if (aParts.length < 2) {
+                    continue;
+                }
+
+                int iCustomerId = Integer.parseInt(aParts[0]);
+                String sCustomerName = aParts[1];
+                customers.add(new Customer(iCustomerId, sCustomerName));
+            }
+        } catch (IOException e) {
+            System.out.println("I could not load data from " + sCustomersFile + ".");
+        }
+    }
+
+    // I am rebuilding the rental history from rental_records.txt.
+    private void loadRecordsFromFile() {
+        File fRentalRecordsFile = new File(sRentalRecordsFile);
+
+        if (!fRentalRecordsFile.exists()) {
+            return;
+        }
+
+        try (BufferedReader reader = new BufferedReader(new FileReader(fRentalRecordsFile))) {
+            String sLine;
+
+            while ((sLine = reader.readLine()) != null) {
+                String[] aParts = sLine.split("\\|");
+
+                if (aParts.length < 6) {
+                    continue;
+                }
+
+                String sPlate = aParts[1];
+                int iCustomerId = Integer.parseInt(aParts[2]);
+                String sCustomerName = aParts[3];
+                LocalDate dtRecordDate = LocalDate.parse(aParts[4]);
+                double dTotalAmount = Double.parseDouble(aParts[5]);
+                Vehicle vehicle = findVehicleByPlate(sPlate);
+                Customer customer = findCustomerById(iCustomerId);
+
+                if (vehicle == null) {
+                    continue;
+                }
+
+                if (customer == null) {
+                    customer = new Customer(iCustomerId, sCustomerName);
+                }
+
+                rentalHistory.addRecord(new RentalRecord(vehicle, customer, dtRecordDate, dTotalAmount, aParts[0]));
+            }
+        } catch (IOException e) {
+            System.out.println("I could not load data from " + sRentalRecordsFile + ".");
+        }
+    }
+
     private void overwriteVehiclesFile() {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(sVehiclesFile, false))) {
             for (Vehicle vehicle : vehicles) {
@@ -129,6 +237,34 @@ public class RentalSystem {
 
         return "Vehicle|" + vehicle.getLicensePlate() + "|" + vehicle.getMake() + "|" +
                 vehicle.getModel() + "|" + vehicle.getYear() + "|" + vehicle.getStatus();
+    }
+
+    private Vehicle createVehicleFromData(String[] aParts) {
+        String sVehicleType = aParts[0];
+        String sLicensePlate = aParts[1];
+        String sMake = aParts[2];
+        String sModel = aParts[3];
+        int iYear = Integer.parseInt(aParts[4]);
+        Vehicle.VehicleStatus status = Vehicle.VehicleStatus.valueOf(aParts[5]);
+        Vehicle vehicle;
+
+        if (sVehicleType.equals("Car") && aParts.length >= 7) {
+            int iNumSeats = Integer.parseInt(aParts[6]);
+            vehicle = new Car(sMake, sModel, iYear, iNumSeats);
+        } else if (sVehicleType.equals("Minibus") && aParts.length >= 7) {
+            boolean bIsAccessible = Boolean.parseBoolean(aParts[6]);
+            vehicle = new Minibus(sMake, sModel, iYear, bIsAccessible);
+        } else if (sVehicleType.equals("PickupTruck") && aParts.length >= 8) {
+            double dCargoSize = Double.parseDouble(aParts[6]);
+            boolean bHasTrailer = Boolean.parseBoolean(aParts[7]);
+            vehicle = new PickupTruck(sMake, sModel, iYear, dCargoSize, bHasTrailer);
+        } else {
+            return null;
+        }
+
+        vehicle.setLicensePlate(sLicensePlate);
+        vehicle.setStatus(status);
+        return vehicle;
     }
 
     public void displayVehicles(Vehicle.VehicleStatus status) {
