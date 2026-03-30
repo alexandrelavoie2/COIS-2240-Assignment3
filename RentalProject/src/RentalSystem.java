@@ -29,9 +29,16 @@ public class RentalSystem {
         return instance;
     }
 
-    public void addVehicle(Vehicle vehicle) {
+    // I am preventing duplicate license plates before adding a vehicle.
+    public boolean addVehicle(Vehicle vehicle) {
+        if (findVehicleByPlate(vehicle.getLicensePlate()) != null) {
+            System.out.println("A vehicle with this license plate already exists.");
+            return false;
+        }
+
         vehicles.add(vehicle);
         saveVehicle(vehicle);
+        return true;
     }
 
     public void addCustomer(Customer customer) {
