@@ -4,8 +4,8 @@ import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.Priority;
-import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
@@ -13,6 +13,11 @@ public class RentalSystemGUI extends Application {
     private Scene scene;
     private final VBox vbMainMenu = new VBox(14);
     private final VBox vbAddVehicleMenu = new VBox(14);
+    private final VBox vbAddCarMenu = new VBox(14);
+    private final TextField tfCarPlate = new TextField();
+    private final TextField tfCarMake = new TextField();
+    private final TextField tfCarModel = new TextField();
+    private final TextField tfCarYear = new TextField();
 
     public static void main(String[] args) {
         launch(args);
@@ -42,6 +47,7 @@ public class RentalSystemGUI extends Application {
                 btnExit);
 
         buildAddVehicleMenu();
+        buildAddCarMenu();
 
         scene = new Scene(vbMainMenu, 700, 650);
         stage.setTitle("Vehicle Rental System GUI");
@@ -58,10 +64,44 @@ public class RentalSystemGUI extends Application {
         Button btnPickupTruck = createMenuButton("3: Pickup Truck");
         Button btnBack = createMenuButton("0: Back");
 
+        btnCar.setOnAction(event -> showAddCarMenu());
         btnBack.setOnAction(event -> showMainMenu());
 
         configureMenuBox(vbAddVehicleMenu);
         vbAddVehicleMenu.getChildren().addAll(lblTitle, btnCar, btnMinibus, btnPickupTruck, btnBack);
+    }
+
+    private void buildAddCarMenu() {
+        Label lblTitle = new Label("Add Car");
+        lblTitle.setStyle("-fx-font-size: 24px; -fx-font-weight: bold;");
+
+        Label lblPlate = new Label("Enter license plate");
+        tfCarPlate.setPromptText("e.g. AAA111");
+        Label lblMake = new Label("Enter make");
+        tfCarMake.setPromptText("e.g. Toyota");
+        Label lblModel = new Label("Enter model");
+        tfCarModel.setPromptText("e.g. Corolla");
+        Label lblYear = new Label("Enter year");
+        tfCarYear.setPromptText("e.g. 2019");
+
+        Button btnAddCar = createMenuButton("Add Car");
+        Button btnBack = createMenuButton("0: Back");
+
+        btnBack.setOnAction(event -> showAddVehicleMenu());
+
+        configureMenuBox(vbAddCarMenu);
+        vbAddCarMenu.getChildren().addAll(
+                lblTitle,
+                lblPlate,
+                tfCarPlate,
+                lblMake,
+                tfCarMake,
+                lblModel,
+                tfCarModel,
+                lblYear,
+                tfCarYear,
+                btnAddCar,
+                btnBack);
     }
 
     private void configureMenuBox(VBox vbMenu) {
@@ -76,6 +116,10 @@ public class RentalSystemGUI extends Application {
 
     private void showAddVehicleMenu() {
         scene.setRoot(vbAddVehicleMenu);
+    }
+
+    private void showAddCarMenu() {
+        scene.setRoot(vbAddCarMenu);
     }
 
     private Button createMenuButton(String sText) {
