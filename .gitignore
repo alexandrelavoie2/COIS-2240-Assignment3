@@ -1,0 +1,21 @@
+# VSCode
+.vscode/
+
+# Sublime-Text
+*.sublime-project
+*.sublime-workspace
+
+# Eclipse
+
+
+
+# Folders
+ignore/
+junk/
+
+
+
+# File Types
+
+*.class
+/.metadata/
